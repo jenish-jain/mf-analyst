@@ -2,6 +2,7 @@ package plotter
 
 import (
 	"fmt"
+	"github.com/jenish-jain/mf-analyst/pkg/analyser"
 	"github.com/jenish-jain/mf-analyst/pkg/mfapi"
 	"github.com/wcharczuk/go-chart/v2"
 	"log"
@@ -10,14 +11,15 @@ import (
 )
 
 func PlotTimeSeries(Title string, XValues []time.Time, YValues []float64, data mfapi.MFData) {
-	priceSeries := chart.TimeSeries{
-		Name: Title,
-		Style: chart.Style{
-			StrokeColor: chart.GetDefaultColor(0),
-		},
-		XValues: XValues,
-		YValues: YValues,
-	}
+	//priceSeries := chart.TimeSeries{
+	//	Name: Title,
+	//	Style: chart.Style{
+	//		StrokeColor: chart.GetDefaultColor(0),
+	//		FillColor:   drawing.ColorBlue.WithAlpha(35),
+	//	},
+	//	XValues: XValues,
+	//	YValues: YValues,
+	//}
 	//smaSeries := chart.SMASeries{
 	//	Name: "SPY - SMA",
 	//	Style: chart.Style{
@@ -36,7 +38,7 @@ func PlotTimeSeries(Title string, XValues []time.Time, YValues []float64, data m
 	//	InnerSeries: priceSeries,
 	//}
 
-	//sipSeries := analyser.GetSipPlotChart(5000, data)
+	plotSeries := analyser.GetSipPlotChart(20, "20-03-2021", data)
 
 	graph := chart.Chart{
 		Title:      Title,
@@ -46,21 +48,11 @@ func PlotTimeSeries(Title string, XValues []time.Time, YValues []float64, data m
 		},
 		YAxis: chart.YAxis{
 			Range: &chart.ContinuousRange{
-				Max: 100,
+				Max: 200,
 				Min: 0.0,
 			},
 		},
-		Series: []chart.Series{
-			//bbSeries,
-			priceSeries,
-			//&sipSeries,
-			//smaSeries,
-			//chart.AnnotationSeries{
-			//	Annotations: []chart.Value2{
-			//		{XValue: 1.0, YValue: 5.0},
-			//	},
-			//},
-		},
+		Series: plotSeries,
 		Width:  2000,
 		Height: 800,
 	}
@@ -76,7 +68,7 @@ func PlotTimeSeries(Title string, XValues []time.Time, YValues []float64, data m
 	}
 	defer f.Close()
 	err = graph.Render(chart.PNG, f)
-	if err!= nil {
+	if err != nil {
 		log.Printf("error rendering graph - %v", err)
 	}
 }
